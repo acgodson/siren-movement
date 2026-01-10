@@ -30,6 +30,15 @@ module siren::reputation {
         profile.total_signals = profile.total_signals + 1;
     }
 
+    public fun reward_signal_confirmation(user_addr: address) acquires UserProfile {
+        if (!exists<UserProfile>(user_addr)) {
+            return
+        };
+
+        let profile = borrow_global_mut<UserProfile>(user_addr);
+        profile.reputation_score = profile.reputation_score + 5;
+    }
+
     #[view]
     public fun get_reputation(user_addr: address): u64 acquires UserProfile {
         if (!exists<UserProfile>(user_addr)) {

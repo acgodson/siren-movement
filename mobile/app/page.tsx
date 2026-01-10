@@ -71,8 +71,8 @@ export default function HomePage() {
 
   if (!ready) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-black font-medium">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-gray-50 to-white">
+        <div className="text-black font-medium tracking-tight">Loading...</div>
       </div>
     );
   }
@@ -83,14 +83,19 @@ export default function HomePage() {
 
   if (!movementAddress) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white border-4 border-black">
-        <div className="bg-white p-8 border-4 border-black max-w-md w-full text-center">
-          <img src="/logo.png" alt="Siren" className="h-12 w-12 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-4 text-black siren-wordmark">Setting Up Wallet</h2>
-          <p className="text-black mb-6 font-medium">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-gray-50 to-white">
+        <div className="liquid-glass border-4 border-black p-10 max-w-md w-full text-center smooth-fade-in">
+          <div className="relative inline-block mb-6">
+            <img src="/logo.png" alt="Siren" className="h-16 w-16 mx-auto liquid-pulse" />
+          </div>
+          <h2 className="text-2xl font-bold mb-4 text-black siren-wordmark tracking-tight">Setting Up Wallet</h2>
+          <p className="text-black mb-8 font-medium text-sm">
             Creating your Movement wallet...
           </p>
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-black border-t-[#DC2626] mx-auto"></div>
+          <div className="relative inline-block">
+            <div className="animate-spin rounded-full h-14 w-14 border-4 border-black/20 border-t-[#DC2626] mx-auto"></div>
+            <div className="absolute inset-0 animate-spin rounded-full h-14 w-14 border-4 border-transparent border-r-black/10 mx-auto" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+          </div>
         </div>
       </div>
     );

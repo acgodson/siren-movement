@@ -4,7 +4,7 @@ version = "1.0.0"
 authors = []
 
 [addresses]
-siren = "00f8b6fe3dfa1714b8e30a2ae14b0f5db21d2bf23e73f061c6ff1cd5106971c6"
+siren = "8929dbe48bae9c96036e7cb03c80d7686aa79d525571f93e98b48ef41e26389c"
 
 [dev-addresses]
 
