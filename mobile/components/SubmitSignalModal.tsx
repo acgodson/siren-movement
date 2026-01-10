@@ -115,19 +115,19 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
   if (txHash) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div className="bg-white rounded-3xl p-8 max-w-md w-full text-center animate-scale-in">
+        <div className="bg-white border-4 border-black p-8 max-w-md w-full text-center">
           <div className="text-6xl mb-4">✅</div>
-          <h3 className="text-2xl font-bold mb-2">Signal Submitted!</h3>
-          <p className="text-gray-600 mb-4">
+          <h3 className="text-2xl font-bold mb-2 text-black">Signal Submitted!</h3>
+          <p className="text-black mb-4">
             Your signal has been recorded on Movement blockchain.
           </p>
-          <div className="bg-gray-50 p-3 rounded-lg mb-4">
-            <p className="text-xs text-gray-500 mb-1">Transaction Hash</p>
-            <p className="text-xs font-mono break-all text-gray-700">
+          <div className="bg-[#F5F5F5] border-2 border-black p-3 mb-4">
+            <p className="text-xs text-black font-medium mb-1">Transaction Hash</p>
+            <p className="text-xs font-mono break-all text-black">
               {txHash}
             </p>
           </div>
-          <p className="text-lg font-semibold text-indigo-600">+10 Reputation Earned! 🎉</p>
+          <p className="text-lg font-bold text-[#DC2626] border-t-2 border-black pt-4">+10 Reputation Earned! 🎉</p>
         </div>
       </div>
     );
@@ -136,72 +136,72 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end z-50" onClick={onClose}>
       <div
-        className="bg-white w-full rounded-t-3xl p-6 animate-slide-up"
+        className="bg-white w-full border-t-4 border-black p-6"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-4"></div>
-        <h3 className="text-2xl font-bold mb-6">Submit Signal</h3>
+        <div className="w-12 h-1 bg-black mx-auto mb-4"></div>
+        <h3 className="text-2xl font-bold mb-6 text-black border-b-2 border-black pb-2">Submit Signal</h3>
 
         <div className="mb-6">
-          <p className="text-sm font-medium text-gray-700 mb-3">Select signal type:</p>
+          <p className="text-sm font-bold text-black mb-3">Select signal type:</p>
           <div className="grid grid-cols-2 gap-3">
             {SIGNAL_TYPES.map((type) => (
               <button
                 key={type.value}
                 onClick={() => setSelectedType(type.value)}
-                className={`p-4 rounded-xl border-2 transition-all ${
+                className={`p-4 border-2 transition-all ${
                   selectedType === type.value
-                    ? 'border-indigo-600 bg-indigo-50 scale-105'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-[#DC2626] bg-white scale-105'
+                    : 'border-black hover:border-[#DC2626]'
                 }`}
               >
                 <div className="text-4xl mb-2">{type.emoji}</div>
-                <div className="text-sm font-semibold text-gray-800">{type.label}</div>
+                <div className="text-sm font-bold text-black">{type.label}</div>
               </button>
             ))}
           </div>
         </div>
 
         {userLocation && (
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-            <p className="text-xs font-medium text-gray-600 mb-1">Your Location</p>
-            <p className="text-sm font-mono text-gray-800">
+          <div className="mb-6 p-4 bg-[#F5F5F5] border-2 border-black">
+            <p className="text-xs font-bold text-black mb-1">Your Location</p>
+            <p className="text-sm font-mono text-black">
               {userLocation.lat.toFixed(6)}, {userLocation.lon.toFixed(6)}
             </p>
           </div>
         )}
 
         {!userLocation && (
-          <div className="mb-6 p-4 bg-yellow-50 rounded-lg text-center">
-            <p className="text-sm text-yellow-800">📍 Getting your location...</p>
+          <div className="mb-6 p-4 bg-white border-2 border-black text-center">
+            <p className="text-sm text-black font-medium">📍 Getting your location...</p>
           </div>
         )}
 
         {isLowBalance && (
-          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-sm text-yellow-800">
+          <div className="mb-6 p-4 bg-white border-2 border-[#DC2626]">
+            <p className="text-sm text-black font-medium">
               ⚠️ Low balance ({balanceMOVE.toFixed(4)} MOVE). Please fund your wallet before submitting.
             </p>
           </div>
         )}
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 rounded-lg">
-            <p className="text-sm text-red-800">{error}</p>
+          <div className="mb-6 p-4 bg-white border-2 border-[#DC2626]">
+            <p className="text-sm text-black font-medium">{error}</p>
           </div>
         )}
 
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 bg-gray-100 text-gray-800 py-3 rounded-xl font-semibold hover:bg-gray-200 transition"
+            className="flex-1 bg-white text-black py-3 font-bold border-2 border-black hover:bg-[#F5F5F5] transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={submitting || !userLocation || !user?.id || isLowBalance}
-            className="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition"
+            className="flex-1 bg-black text-white py-3 font-bold border-2 border-black hover:bg-[#DC2626] hover:border-[#DC2626] disabled:bg-gray-400 disabled:border-gray-400 disabled:cursor-not-allowed transition-colors"
           >
             {submitting ? 'Submitting...' : isLowBalance ? 'Insufficient Balance' : 'Submit Signal'}
           </button>

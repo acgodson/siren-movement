@@ -71,8 +71,8 @@ export default function HomePage() {
 
   if (!ready) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-500">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-black font-medium">Loading...</div>
       </div>
     );
   }
@@ -83,13 +83,14 @@ export default function HomePage() {
 
   if (!movementAddress) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
-          <h2 className="text-2xl font-bold mb-4">Setting Up Wallet</h2>
-          <p className="text-gray-600 mb-6">
+      <div className="min-h-screen flex items-center justify-center bg-white border-4 border-black">
+        <div className="bg-white p-8 border-4 border-black max-w-md w-full text-center">
+          <img src="/logo.png" alt="Siren" className="h-12 w-12 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold mb-4 text-black siren-wordmark">Setting Up Wallet</h2>
+          <p className="text-black mb-6 font-medium">
             Creating your Movement wallet...
           </p>
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-black border-t-[#DC2626] mx-auto"></div>
         </div>
       </div>
     );

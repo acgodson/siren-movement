@@ -112,9 +112,9 @@ export function MapView({ address }: Props) {
         )}
       </header>
 
-      <div className="flex-1 overflow-auto p-4">
+      <div className="flex-1 overflow-auto p-4 bg-white">
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900">
+          <h2 className="text-lg font-bold mb-4 text-black border-b-2 border-black pb-2">
             Active Signals ({signals?.length || 0})
           </h2>
 
@@ -123,8 +123,7 @@ export function MapView({ address }: Props) {
               <div
                 key={signal.id}
                 onClick={() => setSelectedSignal(signal)}
-                className="border-l-4 p-4 bg-white rounded-lg shadow cursor-pointer hover:shadow-md transition"
-                style={{ borderColor: SIGNAL_TYPES[signal.signal_type as SignalType].color }}
+                className="border-2 border-black p-4 bg-white cursor-pointer hover:border-[#DC2626] transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -132,19 +131,19 @@ export function MapView({ address }: Props) {
                       {SIGNAL_TYPES[signal.signal_type as SignalType].emoji}
                     </span>
                     <div>
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-bold text-black">
                         {SIGNAL_TYPES[signal.signal_type as SignalType].label}
                       </p>
-                      <p className="text-sm text-gray-500 font-mono">
+                      <p className="text-sm text-black font-mono">
                         {signal.lat.toFixed(4)}, {signal.lon.toFixed(4)}
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-xs text-gray-500">
+                  <div className="text-right border-l-2 border-black pl-3">
+                    <p className="text-xs text-black font-medium">
                       {new Date(Number(signal.timestamp) * 1000).toLocaleTimeString()}
                     </p>
-                    <p className="text-sm font-medium text-gray-700">
+                    <p className="text-sm font-bold text-[#DC2626]">
                       {signal.confidence}% confidence
                     </p>
                   </div>
@@ -153,10 +152,10 @@ export function MapView({ address }: Props) {
             ))}
 
             {(!signals || signals.length === 0) && (
-              <div className="text-center py-12">
+              <div className="text-center py-12 border-2 border-dashed border-black">
                 <div className="text-6xl mb-4">📍</div>
-                <p className="text-gray-500 mb-2">No signals yet</p>
-                <p className="text-sm text-gray-400">Be the first to report!</p>
+                <p className="text-black font-semibold mb-2">No signals yet</p>
+                <p className="text-sm text-black">Be the first to report!</p>
               </div>
             )}
           </div>
@@ -165,10 +164,10 @@ export function MapView({ address }: Props) {
 
       <button
         onClick={() => setShowSubmitModal(true)}
-        className="fixed bottom-6 right-6 bg-indigo-600 text-white p-5 rounded-full shadow-2xl hover:bg-indigo-700 hover:scale-110 transition-all"
+        className="fixed bottom-6 right-6 bg-black text-white p-5 border-2 border-black hover:bg-[#DC2626] hover:border-[#DC2626] transition-colors shadow-lg"
       >
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
         </svg>
       </button>
 
@@ -186,45 +185,45 @@ export function MapView({ address }: Props) {
           onClick={() => setSelectedSignal(null)}
         >
           <div
-            className="bg-white w-full rounded-t-3xl p-6 animate-slide-up"
+            className="bg-white w-full border-t-4 border-black p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-4"></div>
-            <h3 className="text-xl font-bold mb-4">Signal Details</h3>
+            <div className="w-12 h-1 bg-black mx-auto mb-4"></div>
+            <h3 className="text-xl font-bold mb-4 text-black border-b-2 border-black pb-2">Signal Details</h3>
             <div className="space-y-3">
-              <div>
-                <span className="text-sm text-gray-500">Type</span>
-                <p className="text-lg font-semibold">
+              <div className="border-l-2 border-black pl-3">
+                <span className="text-xs text-black font-medium block mb-1">Type</span>
+                <p className="text-lg font-bold text-black">
                   {SIGNAL_TYPES[selectedSignal.signal_type as SignalType].emoji}{' '}
                   {SIGNAL_TYPES[selectedSignal.signal_type as SignalType].label}
                 </p>
               </div>
-              <div>
-                <span className="text-sm text-gray-500">Location</span>
-                <p className="font-mono text-sm">
+              <div className="border-l-2 border-black pl-3">
+                <span className="text-xs text-black font-medium block mb-1">Location</span>
+                <p className="font-mono text-sm text-black">
                   {selectedSignal.lat.toFixed(6)}, {selectedSignal.lon.toFixed(6)}
                 </p>
               </div>
-              <div>
-                <span className="text-sm text-gray-500">Reporter</span>
-                <p className="font-mono text-sm break-all">
+              <div className="border-l-2 border-black pl-3">
+                <span className="text-xs text-black font-medium block mb-1">Reporter</span>
+                <p className="font-mono text-sm break-all text-black">
                   {selectedSignal.reporter}
                 </p>
               </div>
-              <div>
-                <span className="text-sm text-gray-500">Time</span>
-                <p className="text-sm">
+              <div className="border-l-2 border-black pl-3">
+                <span className="text-xs text-black font-medium block mb-1">Time</span>
+                <p className="text-sm text-black">
                   {new Date(Number(selectedSignal.timestamp) * 1000).toLocaleString()}
                 </p>
               </div>
-              <div>
-                <span className="text-sm text-gray-500">Confidence</span>
-                <p className="text-sm">{selectedSignal.confidence}%</p>
+              <div className="border-l-2 border-[#DC2626] pl-3">
+                <span className="text-xs text-black font-medium block mb-1">Confidence</span>
+                <p className="text-sm font-bold text-[#DC2626]">{selectedSignal.confidence}%</p>
               </div>
             </div>
             <button
               onClick={() => setSelectedSignal(null)}
-              className="mt-6 w-full bg-gray-100 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
+              className="mt-6 w-full bg-black text-white py-3 font-bold border-2 border-black hover:bg-[#DC2626] hover:border-[#DC2626] transition-colors"
             >
               Close
             </button>

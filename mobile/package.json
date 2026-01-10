@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@aptos-labs/ts-sdk": "^2.0.0",
-    "@privy-io/react-auth": "^3.7.0",
+    "@privy-io/react-auth": "^3.10.1",
     "@siren/blockchain": "workspace:*",
     "@tanstack/react-query": "^5.56.2",
     "@trpc/client": "11.0.0-rc.532",
