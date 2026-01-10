@@ -1,0 +1,44 @@
+{
+  "name": "@Siren/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "pnpm --filter @Siren/mobile build && next build --webpack",
+    "start": "next start",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@aptos-labs/ts-sdk": "^2.0.0",
+    "@privy-io/react-auth": "^3.7.0",
+    "@siren/blockchain": "workspace:*",
+    "@tanstack/react-query": "^5.56.2",
+    "@trpc/client": "11.0.0-rc.532",
+    "@trpc/react-query": "11.0.0-rc.532",
+    "@trpc/server": "11.0.0-rc.532",
+    "@vercel/postgres": "^0.10.0",
+    "drizzle-orm": "^0.33.0",
+    "next": "16.1.1",
+    "pg": "^8.16.3",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/pg": "^8.16.0",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "dotenv": "^16.4.0",
+    "drizzle-kit": "^0.24.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.1",
+    "pg": "^8.16.3",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

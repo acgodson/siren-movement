@@ -1,0 +1,22 @@
+{
+  "name": "siren-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "mobile"
+  ],
+  "scripts": {
+    "dev": "pnpm --filter @Siren/mobile dev",
+    "build": "pnpm --filter @Siren/mobile build",
+    "db:start": "cd mobile && docker compose up -d",
+    "db:stop": "cd mobile && docker compose down",
+    "db:push": "cd mobile && pnpm db:push",
+    "contracts:compile": "cd packages/contracts && movement move compile --named-addresses siren=default",
+    "contracts:test": "cd packages/contracts && movement move test",
+    "contracts:publish": "cd packages/contracts && movement move publish --named-addresses siren=default --network testnet"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}

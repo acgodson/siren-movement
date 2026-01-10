@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #000000;
+  --siren-red: #DC2626;
+  --siren-red-dark: #991B1B;
+  --siren-black: #171717;
+  --siren-gray: #F5F5F5;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-siren-red: var(--siren-red);
+  --color-siren-red-dark: var(--siren-red-dark);
+  --color-siren-black: var(--siren-black);
+  --color-siren-gray: var(--siren-gray);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  overscroll-behavior: none;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
+}
+
+/* Brand gradient for borders and strokes */
+.gradient-border {
+  border-image: linear-gradient(to right, #000000, #DC2626) 1;
+}
+
+.gradient-stroke {
+  stroke: url(#gradient);
+}
+
+/* Siren brand serif font styling */
+.siren-wordmark {
+  font-family: 'Times New Roman', serif;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+}
