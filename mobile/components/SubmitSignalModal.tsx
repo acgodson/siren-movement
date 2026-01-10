@@ -106,6 +106,8 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
         const confidence = result.analysis?.confidence || 0;
         const details = result.analysis?.details || 'Noise levels are within acceptable range.';
         const severity = result.analysis?.severity || 'low';
+        setNoiseData(null);
+        setStep('select');
         setError(`No significant noise pollution detected (${confidence}% confidence, severity: ${severity}). ${details}`);
       }
     } catch (err) {
@@ -142,7 +144,9 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
         console.log('No checkpoint detected or analysis failed');
         const confidence = result.analysis?.confidence || 0;
         const details = result.analysis?.details || 'No checkpoint detected in the image.';
-        setError(`Checkpoint not detected (${confidence}% confidence). ${details.substring(0, 100)}...`);
+        setCheckpointImage(null);
+        setStep('select');
+        setError(`Checkpoint not detected (${confidence}% confidence). ${details.substring(0, 150)}`);
       }
     } catch (err) {
       console.error('Image analysis error:', err);
