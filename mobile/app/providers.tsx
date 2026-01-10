@@ -19,7 +19,7 @@ export function Providers({ children }: { children: ReactNode }) {
                 appearance: {
                     theme: 'light',
                     accentColor: '#6366f1',
-                    logo: '/favicon.ico',
+                    logo: '/logo_text.png',
                 },
             }}
         >

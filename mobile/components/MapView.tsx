@@ -1,8 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { trpc } from '@/trpc/client';
 import { SubmitSignalModal } from './SubmitSignalModal';
+import { LocationSearch } from './LocationSearch';
+import { getCurrentLocation, calculateDistance, formatDistance } from '@/lib/geo-utils';
+import { reverseGeocode } from '@/lib/geocoding';
+import { getRelativeTime } from '@/lib/date-utils';
+
+// Dynamically import MapContainer to disable SSR (Mapbox uses browser APIs)
+const MapContainer = dynamic(() => import('./MapContainer').then(mod => ({ default: mod.MapContainer })), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+      <p className="text-black font-medium">Loading map...</p>
+    </div>
+  ),
+});
 
 interface Props {
   address: string;
@@ -21,6 +36,9 @@ export function MapView({ address }: Props) {
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [selectedSignal, setSelectedSignal] = useState<any>(null);
   const [copied, setCopied] = useState(false);
+  const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
+  const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
+  const [geocodedAddresses, setGeocodedAddresses] = useState<Map<string, string>>(new Map());
 
   const { data: signals, refetch } = trpc.siren.getAllSignals.useQuery(undefined, {
     refetchInterval: 5000,
@@ -64,31 +82,57 @@ export function MapView({ address }: Props) {
   const balanceMOVE = balance?.balanceMOVE || 0;
   const isLowBalance = balanceMOVE < 0.005;
 
+  // Get user location on mount
+  useEffect(() => {
+    getCurrentLocation().then(setUserLocation);
+  }, []);
+
+  // Geocode signals for list view
+  useEffect(() => {
+    if (!signals || viewMode !== 'list') return;
+
+    signals.forEach(async (signal) => {
+      if (!geocodedAddresses.has(signal.id)) {
+        const address = await reverseGeocode(signal.lat, signal.lon);
+        setGeocodedAddresses((prev) => new Map(prev).set(signal.id, address));
+      }
+    });
+  }, [signals, viewMode, geocodedAddresses]);
+
+  const handleLocationSelect = (lon: number, lat: number) => {
+    // This function will be called from LocationSearch
+    // We can add map centering logic here if needed
+  };
+
   return (
     <div className="h-screen flex flex-col bg-gradient-to-br from-white via-gray-50 to-white">
       <header className="liquid-glass border-b-2 border-black px-4 py-4 sticky top-0 z-10">
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <img src="/logo.png" alt="Siren" className="h-10 w-10 liquid-pulse" />
-              <div className="absolute inset-0 bg-[#DC2626] opacity-0 hover:opacity-10 rounded-full transition-opacity duration-300"></div>
-            </div>
-        <div>
-              <h1 className="text-xl font-bold text-black siren-wordmark tracking-tight">SIREN</h1>
-              <button
-                onClick={copyAddress}
-                className="text-xs text-black hover:text-[#DC2626] font-mono flex items-center gap-1 border-b border-black hover:border-[#DC2626] transition-all duration-300 hover:scale-105"
-              >
-                {address.slice(0, 10)}...{address.slice(-8)}
-                <span className="text-xs transition-transform duration-300">{copied ? '✓' : '📋'}</span>
-              </button>
-            </div>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <img src="/logo_text.png" alt="Siren" className="h-8 liquid-pulse" />
+            <button
+              onClick={copyAddress}
+              className="text-xs text-black hover:text-[#DC2626] font-mono flex items-center gap-1 border-b border-black hover:border-[#DC2626] transition-all duration-300 hover:scale-105 self-start sm:self-auto"
+            >
+              {address.slice(0, 10)}...{address.slice(-8)}
+              <span className="text-xs transition-transform duration-300">{copied ? '✓' : '📋'}</span>
+            </button>
           </div>
-          <div className="text-right border-l-2 border-black pl-4 smooth-fade-in">
-            <p className="text-xs text-black font-medium mb-1">Reputation</p>
-            <p className="text-2xl font-bold text-[#DC2626] tracking-tight">
-              {reputation?.reputation || 0}
-            </p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setViewMode(viewMode === 'map' ? 'list' : 'map')}
+              className="glass-card border-2 border-black px-3 py-2 text-xs font-bold hover:border-[#DC2626] transition-all"
+              aria-label={`Switch to ${viewMode === 'map' ? 'list' : 'map'} view`}
+              aria-pressed={viewMode === 'map'}
+            >
+              {viewMode === 'map' ? '📋 List' : '🗺️ Map'}
+            </button>
+            <div className="text-right border-l-2 border-black pl-4 smooth-fade-in">
+              <p className="text-xs text-black font-medium mb-1">Reputation</p>
+              <p className="text-2xl font-bold text-[#DC2626] tracking-tight">
+                {reputation?.reputation || 0}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -115,62 +159,88 @@ export function MapView({ address }: Props) {
         )}
       </header>
 
-      <div className="flex-1 overflow-auto p-4 bg-gradient-to-b from-transparent to-gray-50/30">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-lg font-bold mb-6 text-black border-b-2 border-black pb-3 tracking-tight">
-            Active Signals ({signals?.length || 0})
-          </h2>
+      {viewMode === 'map' ? (
+        <div className="flex-1 relative">
+          <div className="absolute top-4 left-4 right-4 z-10">
+            <LocationSearch onLocationSelect={handleLocationSelect} />
+          </div>
+          <MapContainer
+            signals={signals || []}
+            userLocation={userLocation}
+            onSignalClick={setSelectedSignal}
+          />
+        </div>
+      ) : (
+        <div className="flex-1 overflow-auto p-4 bg-gradient-to-b from-transparent to-gray-50/30">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-lg font-bold mb-6 text-black border-b-2 border-black pb-3 tracking-tight">
+              Active Signals ({signals?.length || 0})
+            </h2>
 
-          <div className="space-y-4">
-            {signals?.map((signal, index) => (
-              <div
-                key={signal.id}
-                onClick={() => setSelectedSignal(signal)}
-                className="smooth-border glass-card p-5 cursor-pointer group"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="text-4xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                      {SIGNAL_TYPES[signal.signal_type as SignalType].emoji}
+            <div className="space-y-4">
+              {signals?.map((signal, index) => (
+                <div
+                  key={signal.id}
+                  onClick={() => setSelectedSignal(signal)}
+                  className="smooth-border glass-card p-5 cursor-pointer group"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="text-4xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                        {SIGNAL_TYPES[signal.signal_type as SignalType].emoji}
+                      </div>
+                      <div>
+                        <p className="font-bold text-black text-base mb-1 tracking-tight">
+                          {SIGNAL_TYPES[signal.signal_type as SignalType].label}
+                        </p>
+                        <p className="text-sm text-black/70">
+                          {geocodedAddresses.get(signal.id) || 'Loading location...'}
+                        </p>
+                        {userLocation && (
+                          <p className="text-xs text-black/50 mt-1">
+                            {formatDistance(
+                              calculateDistance(
+                                userLocation.lat,
+                                userLocation.lon,
+                                signal.lat,
+                                signal.lon
+                              )
+                            )}{' '}
+                            away
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-bold text-black text-base mb-1 tracking-tight">
-                        {SIGNAL_TYPES[signal.signal_type as SignalType].label}
+                    <div className="text-right border-l-2 border-black/20 group-hover:border-[#DC2626] pl-4 transition-colors duration-300">
+                      <p className="text-xs text-black/60 font-medium mb-1">
+                        {getRelativeTime(Number(signal.timestamp))}
                       </p>
-                      <p className="text-sm text-black/70 font-mono">
-                        {signal.lat.toFixed(4)}, {signal.lon.toFixed(4)}
+                      <p className="text-sm font-bold text-[#DC2626] tracking-tight">
+                        {signal.confidence}% confidence
                       </p>
                     </div>
-                  </div>
-                  <div className="text-right border-l-2 border-black/20 group-hover:border-[#DC2626] pl-4 transition-colors duration-300">
-                    <p className="text-xs text-black/60 font-medium mb-1">
-                      {new Date(Number(signal.timestamp) * 1000).toLocaleTimeString()}
-                    </p>
-                    <p className="text-sm font-bold text-[#DC2626] tracking-tight">
-                      {signal.confidence}% confidence
-                    </p>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
 
-            {(!signals || signals.length === 0) && (
-              <div className="text-center py-16 glass-card border-2 border-dashed border-black/30 smooth-fade-in">
-                <div className="text-6xl mb-4 opacity-50">📍</div>
-                <p className="text-black font-semibold mb-2 text-lg">No signals yet</p>
-                <p className="text-sm text-black/60">Be the first to report!</p>
-              </div>
-            )}
+              {(!signals || signals.length === 0) && (
+                <div className="text-center py-16 glass-card border-2 border-dashed border-black/30 smooth-fade-in">
+                  <div className="text-6xl mb-4 opacity-50">📍</div>
+                  <p className="text-black font-semibold mb-2 text-lg">No signals yet</p>
+                  <p className="text-sm text-black/60">Be the first to report!</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <button
         onClick={() => setShowSubmitModal(true)}
-        className="btn-siren fixed bottom-6 right-6 bg-black text-white p-5 border-2 border-black hover:bg-[#DC2626] hover:border-[#DC2626] shadow-2xl rounded-full"
+        className="fixed bottom-6 right-6 bg-black text-white w-16 h-16 border-2 border-black hover:bg-[#DC2626] hover:border-[#DC2626] shadow-2xl rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-2xl"
       >
-        <svg className="w-6 h-6 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
         </svg>
       </button>

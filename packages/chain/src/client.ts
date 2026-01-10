@@ -1,9 +1,6 @@
 import { Aptos, AptosConfig, Network } from '@aptos-labs/ts-sdk';
 
-/**
- * Movement Network Configuration
- * Based on Movement-Counter-template network setup
- */
+
 export const MOVEMENT_CONFIGS = {
   testnet: {
     chainId: 250,
@@ -22,17 +19,13 @@ export const MOVEMENT_CONFIGS = {
 
 export type MovementNetwork = keyof typeof MOVEMENT_CONFIGS;
 
-/**
- * Create Aptos client for standard Aptos networks
- */
+
 export function createClient(network: Network = Network.TESTNET) {
   const config = new AptosConfig({ network });
   return new Aptos(config);
 }
 
-/**
- * Create Aptos client configured for Movement network
- */
+
 export function createMovementClient(network: MovementNetwork = 'testnet'): Aptos {
   const config = new AptosConfig({
     network: Network.CUSTOM,

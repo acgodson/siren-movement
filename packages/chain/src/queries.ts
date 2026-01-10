@@ -29,12 +29,12 @@ export async function getAllSignals(
   const signals = result[0] as any[];
 
   return signals.map((s) => ({
-    id: s.id,
+    id: String(s.id),
     reporter: s.reporter,
     signal_type: s.signal_type,
     lat: (Number(s.lat) / 1_000_000) - 90,
     lon: (Number(s.lon) / 1_000_000) - 180,
-    timestamp: s.timestamp,
+    timestamp: String(s.timestamp),
     confidence: s.confidence,
   }));
 }
