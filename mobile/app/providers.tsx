@@ -12,7 +12,9 @@ export function Providers({ children }: { children: ReactNode }) {
                 loginMethods: ['email', 'google'],
 
                 embeddedWallets: {
-                    createOnLogin: 'users-without-wallets',
+                    "ethereum": {
+                        createOnLogin: 'users-without-wallets',
+                    }
                 },
                 appearance: {
                     theme: 'light',
