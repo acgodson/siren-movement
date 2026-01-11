@@ -32,7 +32,7 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
   const [txHash, setTxHash] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Measurement data
   const [noiseData, setNoiseData] = useState<{
     max: number;
@@ -123,7 +123,7 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
     deviceInfo: string;
   }) => {
     setCheckpointImage({ imageData, metadata });
-    
+
     try {
       console.log('Starting image analysis...');
       const result = await analyzeImage.mutateAsync({
@@ -131,11 +131,11 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
         location: { lat: metadata.lat, lon: metadata.lon },
         signalType: 0,
       });
-      
+
       console.log('Image analysis result:', result);
       console.log('Analysis object:', result.analysis);
       console.log('Has checkpoint?', result.analysis?.hasCheckpoint);
-      
+
       if (result.success && result.analysis?.hasCheckpoint) {
         console.log('Checkpoint detected, proceeding to submit...');
         setCheckpointImage(prev => prev ? { ...prev, analysis: result.analysis } : null);
@@ -209,7 +209,6 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
         signalPayload
       );
 
-      // Save measurement data to offchain database (only once, after we have txHash)
       if (noiseMeasurementData || checkpointData) {
         await saveMeasurement.mutateAsync({
           privyUserId: user.id,
@@ -237,7 +236,6 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
     }
   };
 
-  // Success screen
   if (step === 'complete' && txHash) {
     return (
       <div className="fixed inset-0 liquid-glass-dark flex items-center justify-center p-4 z-50 backdrop-blur-md">
@@ -319,23 +317,20 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
                     setStep('measure');
                   }
                 }}
-                className={`smooth-border glass-card p-5 transition-all duration-300 group relative ${
-                  selectedType === type.value
+                className={`smooth-border glass-card p-5 transition-all duration-300 group relative ${selectedType === type.value
                     ? 'border-[#DC2626] border-2 scale-105 bg-white shadow-lg'
                     : 'border-black/30 hover:border-[#DC2626]/50'
-                }`}
+                  }`}
               >
                 {selectedType === type.value && (
                   <div className="absolute top-2 right-2 w-3 h-3 bg-[#DC2626] rounded-full"></div>
                 )}
-                <div className={`text-4xl mb-2 transition-transform duration-300 ${
-                  selectedType === type.value ? 'scale-110' : 'group-hover:scale-110'
-                }`}>
+                <div className={`text-4xl mb-2 transition-transform duration-300 ${selectedType === type.value ? 'scale-110' : 'group-hover:scale-110'
+                  }`}>
                   {type.emoji}
                 </div>
-                <div className={`text-sm font-bold tracking-tight ${
-                  selectedType === type.value ? 'text-[#DC2626]' : 'text-black'
-                }`}>
+                <div className={`text-sm font-bold tracking-tight ${selectedType === type.value ? 'text-[#DC2626]' : 'text-black'
+                  }`}>
                   {type.label}
                 </div>
               </button>
