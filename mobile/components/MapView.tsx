@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { trpc } from '@/trpc/client';
 import { SubmitSignalModal } from './SubmitSignalModal';
+import { AudioSummaryFAB } from './AudioSummaryFAB';
 import { LocationSearch } from './LocationSearch';
 import { getCurrentLocation, calculateDistance, formatDistance } from '@/lib/geo-utils';
 import { reverseGeocode } from '@/lib/geocoding';
@@ -82,12 +83,10 @@ export function MapView({ address }: Props) {
   const balanceMOVE = balance?.balanceMOVE || 0;
   const isLowBalance = balanceMOVE < 0.005;
 
-  // Get user location on mount
   useEffect(() => {
     getCurrentLocation().then(setUserLocation);
   }, []);
 
-  // Geocode signals for list view
   useEffect(() => {
     if (!signals || viewMode !== 'list') return;
 
@@ -100,8 +99,7 @@ export function MapView({ address }: Props) {
   }, [signals, viewMode, geocodedAddresses]);
 
   const handleLocationSelect = (lon: number, lat: number) => {
-    // This function will be called from LocationSearch
-    // We can add map centering logic here if needed
+    // TODO: This function will be called from LocationSearch
   };
 
   return (
@@ -244,6 +242,8 @@ export function MapView({ address }: Props) {
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
         </svg>
       </button>
+
+      <AudioSummaryFAB userLocation={userLocation} />
 
       {showSubmitModal && (
         <SubmitSignalModal

@@ -76,12 +76,21 @@ export async function submitTransaction(
     });
 
     if (!executed.success) {
-      throw new Error('Transaction failed');
+      // Try to extract the actual error message from the transaction
+      const errorMessage = executed.vm_status || 'Transaction failed';
+      const error = new Error(`Transaction ${committedTransaction.hash} failed with an error: ${errorMessage}`);
+      (error as any).transactionHash = committedTransaction.hash;
+      (error as any).vmStatus = executed.vm_status;
+      throw error;
     }
 
     return committedTransaction.hash;
   } catch (error) {
     console.error('Error submitting transaction:', error);
-    throw error;
+    // Preserve original error message if it contains useful information
+    if (error instanceof Error && error.message) {
+      throw error;
+    }
+    throw new Error(error instanceof Error ? error.message : 'Transaction failed');
   }
 }

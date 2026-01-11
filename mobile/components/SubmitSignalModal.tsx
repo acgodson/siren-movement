@@ -183,7 +183,6 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
     setError(null);
 
     try {
-      // Initialize profile if needed
       try {
         const initPayload = buildInitProfileTx();
         await submitTransaction(
@@ -192,11 +191,10 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
           signRawHash,
           initPayload
         );
+        console.log('Profile initialization completed');
       } catch (err) {
-        console.log('Profile init skipped:', err);
+        console.warn('Profile init warning:', err instanceof Error ? err.message : String(err));
       }
-
-      // Submit signal to blockchain
       const signalPayload = buildSubmitSignalTx({
         signalType: selectedType,
         lat: userLocation.lat,
@@ -225,10 +223,8 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
       }
 
       setTxHash(hash);
+      setSubmitting(false);
       setStep('complete');
-      setTimeout(() => {
-        onSubmitted();
-      }, 2000);
     } catch (err) {
       console.error('Submit failed:', err);
       setError(err instanceof Error ? err.message : 'Failed to submit signal');
@@ -257,7 +253,39 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
               {txHash}
             </a>
           </div>
-          <p className="text-lg font-bold text-[#DC2626] border-t-2 border-black pt-6 tracking-tight">+10 Reputation Earned! 🎉</p>
+          <p className="text-lg font-bold text-[#DC2626] border-t-2 border-black pt-6 mb-6 tracking-tight">+10 Reputation Earned! 🎉</p>
+          <button
+            onClick={() => {
+              onSubmitted();
+              onClose();
+            }}
+            className="btn-siren w-full bg-black text-white py-4 font-bold border-2 border-black hover:bg-[#DC2626] hover:border-[#DC2626] transition-all duration-300"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Submitting step - show loading overlay
+  if (step === 'submitting') {
+    return (
+      <div className="fixed inset-0 liquid-glass-dark flex items-center justify-center p-4 z-50 backdrop-blur-md">
+        <div className="liquid-glass border-4 border-black p-8 max-w-md w-full text-center smooth-fade-in">
+          <div className="flex justify-center mb-6">
+            <svg className="animate-spin h-16 w-16 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+          <h3 className="text-2xl font-bold mb-3 text-black tracking-tight">Processing Transaction</h3>
+          <p className="text-black/80 mb-4 text-sm">
+            Submitting your signal to the blockchain...
+          </p>
+          <p className="text-xs text-black/60">
+            Please wait, this may take a few moments.
+          </p>
         </div>
       </div>
     );
@@ -368,8 +396,11 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
         )}
 
         {error && (
-          <div className="mb-6 p-4 glass-card border-2 border-[#DC2626] smooth-fade-in">
-            <p className="text-sm text-black font-medium">{error}</p>
+          <div className="mb-6 p-4 glass-card border-2 border-[#DC2626] bg-red-50/80 smooth-fade-in">
+            <p className="text-sm text-[#DC2626] font-bold flex items-start gap-2">
+              <span className="text-lg flex-shrink-0">⚠️</span>
+              <span>{error}</span>
+            </p>
           </div>
         )}
 
@@ -387,7 +418,17 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
               disabled={submitting || !userLocation || !user?.id || isLowBalance}
               className="btn-siren flex-1 bg-black text-white py-4 font-bold border-2 border-black hover:bg-[#DC2626] hover:border-[#DC2626] disabled:bg-gray-400 disabled:border-gray-400 disabled:cursor-not-allowed relative overflow-hidden"
             >
-              <span className="relative z-10">{submitting ? 'Submitting...' : isLowBalance ? 'Insufficient Balance' : 'Submit Signal'}</span>
+              {submitting ? (
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Processing...
+                </span>
+              ) : (
+                <span className="relative z-10">{isLowBalance ? 'Insufficient Balance' : 'Submit Signal'}</span>
+              )}
             </button>
           </div>
         )}

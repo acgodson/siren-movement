@@ -13,7 +13,11 @@ module siren::reputation {
 
     public entry fun init_profile(user: &signer) {
         let user_addr = signer::address_of(user);
-        assert!(!exists<UserProfile>(user_addr), E_PROFILE_ALREADY_EXISTS);
+
+        // Skip if profile already exists (idempotent operation)
+        if (exists<UserProfile>(user_addr)) {
+            return
+        };
 
         move_to(user, UserProfile {
             reputation_score: 0,
