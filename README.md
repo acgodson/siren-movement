@@ -10,7 +10,6 @@ Crowd-validated civic intelligence powered by Movement blockchain.
 - 🚗 **Traffic** - Heavy traffic
 
 
-
 ## 📊 Tech Stack
 
 - **Blockchain:** Movement (Aptos Move)
@@ -20,10 +19,6 @@ Crowd-validated civic intelligence powered by Movement blockchain.
 - **Frontend:** NextJS + Tailwind CSS
 - **Auth:** Privy.io
 
-## 📝 Next Steps
-
-- [ ] Add Mapbox integration (replace list with map)
-- [ ] Add signal confirmation flow
 
 ## 🏆 Movement Advantages
 
