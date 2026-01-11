@@ -32,4 +32,4 @@ Crowd-validated civic intelligence powered by Movement blockchain.
 - **High TPS** - Scales to thousands of users
 - **Aptos Move** - Secure resource model
 
-**Built for Movement Battle of Olympus Hackathon** 🏛️
+**Built for Movement M1 Hackathon, Powered by Replit** 🏛️
