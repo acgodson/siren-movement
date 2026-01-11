@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import { useSignRawHash } from '@privy-io/react-auth/extended-chains';
 import { submitTransaction, buildInitProfileTx, buildSubmitSignalTx } from '@/lib/transactions';
+import { getExplorerUrl } from '@/lib/aptos';
 import { trpc } from '@/trpc/client';
 import { DecibelMeter } from './DecibelMeter';
 import { CheckpointCamera } from './CheckpointCamera';
@@ -247,9 +248,14 @@ export function SubmitSignalModal({ address, onClose, onSubmitted }: Props) {
           </p>
           <div className="glass-card border-2 border-black p-4 mb-6">
             <p className="text-xs text-black/60 font-medium mb-2 uppercase tracking-wide">Transaction Hash</p>
-            <p className="text-xs font-mono break-all text-black">
+            <a
+              href={getExplorerUrl(txHash)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-mono break-all text-black hover:text-[#DC2626] border-b border-black/30 hover:border-[#DC2626] transition-colors duration-300 inline-block"
+            >
               {txHash}
-            </p>
+            </a>
           </div>
           <p className="text-lg font-bold text-[#DC2626] border-t-2 border-black pt-6 tracking-tight">+10 Reputation Earned! 🎉</p>
         </div>
